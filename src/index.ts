@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 3000;
-app.user(express.json());
+app.use(express.json());
 
 app.listen(
     PORT,
