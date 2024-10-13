@@ -38,8 +38,6 @@ router.post("/process", (req:Request, res:Response) =>{
         //save data to datastore
         datastore[newId] = points
 
-        console.log(datastore);
-
         //return ID
         res.send({id:newId})
     } catch (error) {
