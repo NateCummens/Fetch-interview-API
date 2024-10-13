@@ -1,9 +1,16 @@
 import { Router, Request, Response } from "express";
+import { ReceiptPoints } from "../interfaces/pointData";
+
+const { v4: uuidv4 } = require('uuid');
 
 const router: Router = Router();
 
+let datastore:ReceiptPoints = {};
+
 router.post("/process", (req:Request, res:Response) =>{
+    //get the json receipt in the body
     const receipt = req.body
+    //process the data in the receipt
    let points = receipt.retailer.replace(/\W/g, '').length;
    if(receipt.total%1 === 0){
     points += 50;
@@ -24,12 +31,23 @@ router.post("/process", (req:Request, res:Response) =>{
    if(time > 1400 && time < 1600){
     points += 10;
    }
-   console.log(points)
-    res.send("id")
+   //generate a random ID for the amount of points
+   const newId:string = uuidv4();
+
+   //save data to datastore
+   datastore[newId] = points
+
+   console.log(datastore);
+
+   //return ID
+    res.send({id:newId})
 })
 
 router.get("/:id/points", (req:Request, res:Response) =>{
-    res.send("points")
+    //get ID from path
+    const id = req.params.id;
+    //return points attached to ID
+    res.send({points:datastore[id]})
 })
 
 export default router
