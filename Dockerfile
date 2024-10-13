@@ -20,8 +20,6 @@ COPY package*.json ./
 
 RUN npm install
 
-# RUN npm install typescript@5.6.3
-
 # Expose the port that the application listens on.
 EXPOSE 3000
 
