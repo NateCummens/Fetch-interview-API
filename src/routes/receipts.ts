@@ -1,5 +1,5 @@
 import {Router, Request, Response, NextFunction } from "express";
-import { ReceiptPoints, User} from "../interfaces/pointData";
+import { User} from "../interfaces/pointData";
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -7,13 +7,13 @@ const router: Router = Router();
 
 // let datastore:ReceiptPoints = {};
 
-let userData: User={}
+let datastore: User = {}
 let userId = uuidv4();
-userData[userId] = {
-    receipts:[],
+datastore[userId] = {
+    receipts: {},
     amount: 0
 }
-console.log(userData);
+
 router.post("/process", async (req:Request, res:Response): Promise<void> =>{
     try {
         //get the json receipt in the body
@@ -49,8 +49,8 @@ router.post("/process", async (req:Request, res:Response): Promise<void> =>{
 
         //save data to datastore
         //1000, 500, 250
-        userData[userId].amount += 1;
-        switch(userData[userId].amount){
+        datastore[userId].amount += 1;
+        switch(datastore[userId].amount){
             case(1):
                 points += 1000;
                 break;
@@ -64,11 +64,8 @@ router.post("/process", async (req:Request, res:Response): Promise<void> =>{
                 break;
         }
 
-        let datastore:ReceiptPoints = {};
-        datastore[newId] = points;
-
-        userData[userId].receipts.push(datastore)
-        console.log(userData)
+        datastore[userId].receipts[newId] = points;
+        console.log(datastore)
 
         //return ID
         res.send({id:newId})
@@ -82,13 +79,7 @@ router.get("/:id/points", async (req:Request, res:Response) =>{
         //get ID from path
         const id = req.params.id;
         //return points attached to ID
-        userData[userId].receipts.forEach((receipt)=>{
-            if(receipt[id]){
-                res.send({points:receipt[id]})
-            } else{
-                res.sendStatus(404)
-            }
-        })
+        res.send({points: datastore[userId].receipts[id]});
 
     } catch (error) {
         res.sendStatus(400);

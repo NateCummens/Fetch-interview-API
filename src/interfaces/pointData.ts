@@ -1,10 +1,8 @@
-export interface ReceiptPoints{
-    [key:string]:number
-}
-
 export interface User {
     [key:string]:{
-        receipts: ReceiptPoints[]
+        receipts:{
+            [key:string]:number
+        }
         amount:number
     }
 
